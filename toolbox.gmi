@@ -56,6 +56,9 @@ TODO: add aerc, amfora, catgirl, birch, bollux, chue, delta, dust, exa, pesc, hy
 - **most** packages are missing proper footprint/md5sums.
  
 ## AwesomeWM
+
+TODO: link
+
 ### Pros
 - since a lot of Awesome's behaviour and aesthetics can be tweaked via it's Lua API, Awesome can be anything you want it to be.
 - lots of layouts to choose from, including tiling and floating.
@@ -83,13 +86,13 @@ TODO: add aerc, amfora, catgirl, birch, bollux, chue, delta, dust, exa, pesc, hy
 => https://github.com/dylanaraps/sowm
 
 ### Pros
-- It's __*floating*__.
+- It's FLOATING.
 - It has it's configuration in the source.
 - Very simple and readable source code, which makes it ridiculously easy to modify.
 - No borders (without patches).
 
 ### Cons
-- it's __*floating*__.
+- it's FLOATING.
 - It has it's configuration in the source.
 - No borders (without patches).
 - No EWMH support.
