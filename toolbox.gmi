@@ -1,0 +1,145 @@
+# Useful tools
+
+A list of tools and programs that I find useful.
+
+TODO: explanation
+TODO: add aerc, amfora, catgirl, birch, bollux, chue, delta, dust, exa, pesc, hyperfine, jp, litterbox, weechat, irssi(?), alpine linux, frankenwm, i3wm
+
+## Arch Linux
+
+=> https://archlinux.org
+
+### Pros
+- Pacman package manager
+- rolling release (you're always using the latest version!)
+- great community(?)
+- you get to say that yOu UsE aRcH bTw
+
+### Cons
+- Pacman package manager
+- Arch uses `systemd`, and there's no way to change that.
+- Arch uses `glibc`, and there's no way to change that.
+- Arch uses GNU Coreutils, and it's difficult to change it to, say, Busybox or sbase.
+
+## KISS Linux
+
+=> https://k1ss.org
+
+### Pros
+- Rugged mnmlist mentality.
+- Easy to switch out system components with others, unlike Arch.
+- Extremely simple package format, which makes creating your own package repositories a breeze.
+
+### Cons
+- Rugged mnmlist mentality.
+- You've gotta compile your own kernel, which can lead to a lot of fun if you want to enable certain obscure features  like, say, Wifi. I still haven't been able to get Wifi properly.
+
+## Void Linux
+
+=> https://voidlinux.org
+
+### Pros
+- Runs on many architectures.
+- Ability to choose between `glibc` and `musl`.
+- uses `runit`, not systemd.
+
+## CRUX Linux
+
+=> https://crux.nu
+
+### Pros
+- extremely simple package format and package manager.
+- easy to setup you're own package repository (necessary, since like KISS, not that many packages exist in the repos).
+
+### Cons
+- sparse community. not that many people use it, sadly.
+- **most** packages are missing proper footprint/md5sums.
+ 
+## AwesomeWM
+### Pros
+- since a lot of Awesome's behaviour and aesthetics can be tweaked via it's Lua API, Awesome can be anything you want it to be.
+- lots of layouts to choose from, including tiling and floating.
+
+### Cons
+- due to configuration being done in a programming language, executed at runtime, I find Awesome has a tendency to be a bit laggy at times.
+- no support for manual tiling... yet. Not a problem for me personally but I've heard lots of other ricers complaining about this.
+
+## DWM
+
+=> https://dwm.suckless.org/
+
+### Pros
+- Configuration is in the source. This is precisely what makes dwm so extensible: the fact that the configuration is a part of the code means that you can call custom C functions from your config and from X11.
+- Don't like tiling? dwm has a builtin floating features.
+
+### Cons
+- A bit annoying to recompile every time a configuration value is changed.
+- Many users (like, uh, me) found dwm hard to use due to the fact that it ships with a minimal set of features, and patches must be applied to use certain features (such as a scratchpad). I recommend using [Luke Smith's setup](https://github.com/LukeSmithxyz) as a starting point, and to build up from there. Optionally, you can use [Mitch Weaver's setup](https://github.com/mitchweaver/suckless).
+- The default bar, included with dwm, can be difficult to customize.
+- Polybar doesn't work too well with it by default. Usually, you'll have to add `override-redirect = true` to you're Polybar config. Sometimes it's worse.
+
+## sowm
+
+=> https://github.com/dylanaraps/sowm
+
+### Pros
+- It's __*floating*__.
+- It has it's configuration in the source.
+- Very simple and readable source code, which makes it ridiculously easy to modify.
+- No borders (without patches).
+
+### Cons
+- it's __*floating*__.
+- It has it's configuration in the source.
+- No borders (without patches).
+- No EWMH support.
+
+## 2bwm
+
+### Pros
+- Hey, two borders!!
+- Although it's floating, you can manage most window-related tasks with the keyboard alone.
+
+### Cons
+- It has it's configuration in the (IMO poorly-formatted) source.
+
+
+## Alacritty
+
+=> https://github.com/jwilm/alacritty
+
+### Pros
+- GPU rendered, which makes this terminal blazingly fast - provided, of course, you have a good GPU in the first place.
+
+### Cons
+- If you don't have a good GPU, or if you are on a platform that doesn't support OpenGL (like my Raspberry Pi Zero), alacritty doesn't work.
+- Configuration is in YAML. This may be a good or bad thing depending on whether you're a YAML fan, but in my experience editing yaml files can be extremely tedious.
+
+## XTerm
+- It Just Works™.
+- By default, xterm is extremely ugly, which tends to discourage new users from using it.
+- Huge, at about 65K lines of code. Compare to (unpatched) st, which is just 5K loc.
+- xterm can be Very Slow (depending on what you're doing).
+- Configuration is in an esoteric configuration language commonly known as Xresources.
+
+TODO: rewrite the next three sections.
+### misc
+- `loksh`: an implementation of the Korn Shell that's way better than `bash`. `bash`: 1.1M, `loksh`: 241K
+- `mksh`: like `loksh`, but with some extra features such as `HERESTRINGS`.
+- [`ly`](https://github.com/cyglom/ly): a minimal console-based display manager that, as a bonus, has a cool DOOM animation.
+- [`slock`](https://tools.suckless.org/slock): the simplest lockscreen that I know of.
+- `scdoc`: A markup format that compiles to mandoc.
+- [`lcharmap`](https://github.com/lptstr/lcharmap): a little utility like the Windows `charmap.exe` ported to Linux.
+- [`rsfetch`](https://github.com/rsfetch/rsfetch): a blazingly fast (<5ms) fetch program.
+
+### Programming languages
+- `C`: yep, raw C is the still the best language on earth, contrary to the opinion of some jAvAsCrIpT heretics.
+- `Rust`: best described as a modern version of C++ obsessed with memory safety. Great when you're building something
+that needs to be robust.
+- `PowerShell`: not quite a shell - more of an interpreted language often mistaken for a shell.
+- `Zig`: a (WIP) language that aims to replace C.
+- `Lua`: the languages simplicity makes Lua ideal for small programs and "scripts" -- unfortunately, the standard library is rather sparse.
+
+## Some fonts
+- `ttyp0`: a better version of `misc-fixed`.
+- [`cozette`](https://github.com/slavfox/Cozette): a comfy font derived from Dina/proggy and heavily influenced by creep.

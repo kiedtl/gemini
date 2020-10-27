@@ -1,6 +1,7 @@
 Hello.
 
 Unfortunately, I haven't yet had the time or motivation to port the rest
-of my site here. You can take a look at this while you wait:
+of my site here.
 
-=> ./grim/ Grimm's Fairy Tales
+=> https://tilde.team/~kiedtl My HTTPS homepage
+=> ./toolbox.gmi              A list of tools and utilities that I find useful.
