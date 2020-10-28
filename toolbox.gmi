@@ -1,148 +1,426 @@
 # Useful tools
 
-A list of tools and programs that I find useful.
+A list of tools and programs that I find useful (or annoying), in no particular order.
 
-TODO: explanation
-TODO: add aerc, amfora, catgirl, birch, bollux, chue, delta, dust, exa, pesc, hyperfine, jp, litterbox, weechat, irssi(?), alpine linux, frankenwm, i3wm
+At some point in the future, I intend to add the following programs to this list:
+* weechat, irssi, bollux, amfora, litterbox
+* chue, dust, exa, pesc, hyperfine, jp, busybox, st
+* frankenwm, i3wm, st
+
+## Alpine Linux
+
+=> https://alpinelinux.org
+
+A musl-based distro designed for space-constrained environments and with a focus on security.
+
+### Pros
+* (This is purely subjective) Alpine is good for servers.
+* Alpine uses Busybox by default. (This can be changed if desired.)
+* Alpine uses musl.
+* Alpine uses OpenRC instead of systemd.
+* Its package manager, apk, is extremely fast.
+
+### Cons
+* Not that great as a desktop distro. Many packages are missing, and those that are there are often not updated quickly.
+* Its package manager, apk, has the same name as Android's package format, which makes searching for documentation difficult.
+* Its package manager, apk, is notorious for giving cryptic error messages. For instance, when installing Alpine on my Raspberry Pi, I was a bit surprised to note that apk was refusing to install any package, whining about the repository indexes having invalid shasums. Turns out the actual issue was that apk had decided to download the repo indexes on the /boot partition(!); the download would stop halfway, owing to the lack of disk space, but apk would go ahead and try to continue anyway, at which point it would tantrum about invalid shasums.
+* Alpine uses Busybox by default. (This can be changed if desired.)
+* Alpine uses musl.
+* Alpine uses OpenRC instead of systemd.
+* As of October 27, 2020, much of Alpine's wiki seems to be either out of date or "under construction".
 
 ## Arch Linux
 
 => https://archlinux.org
 
+A rolling-release Linux distro primarily used by testosterone-crazed 13-year-old hairless apes.
+
 ### Pros
-- Pacman package manager
-- rolling release (you're always using the latest version!)
-- great community(?)
-- you get to say that yOu UsE aRcH bTw
+* Arch uses the Pacman package manager, which, depending on your tastes, has a nice command-line interface.
+* Arch is Rolling-Release (you're always using the latest version!)
+* Great community(?)
+* You get to say that yOu UsE aRcH bTw
 
 ### Cons
-- Pacman package manager
-- Arch uses `systemd`, and there's no way to change that.
-- Arch uses `glibc`, and there's no way to change that.
-- Arch uses GNU Coreutils, and it's difficult to change it to, say, Busybox or sbase.
+* Arch uses the Pacman package manager, which is notorious for bricking things every now and then.
+* Arch uses systemd, and there's no way to change that.
+* Arch uses glibc, and there's no way to change that.
+* Arch uses the GNU Coreutils, and it's difficult to change it to, say, Busybox or sbase.
 
 ## KISS Linux
 
 => https://k1ss.org
 
+A fairly new (and somewhat immature) musl-based distro born out of frustration with existing "minimal" distros such as Alpine, Arch, and Void.
+
 ### Pros
-- Rugged mnmlist mentality.
-- Easy to switch out system components with others, unlike Arch.
-- Extremely simple package format, which makes creating your own package repositories a breeze.
+* Extreme mnmlist mentality.
+* Easy to switch out system components with others, unlike Arch.
+* Extremely simple package format, which makes creating your own package repositories a breeze.
 
 ### Cons
-- Rugged mnmlist mentality.
-- You've gotta compile your own kernel, which can lead to a lot of fun if you want to enable certain obscure features  like, say, Wifi. I still haven't been able to get Wifi properly.
+* Extreme mnmlist mentality.
+* You've gotta compile your own kernel, which can lead to a lot of fun if you want to enable certain obscure features  like, say, Wifi. I still haven't been able to get Wifi properly.
+* KISS only officially supports the x86_64 architecture. (There are forks that aim to run on other architectures, such as PowerPC, ARM64, etc.)
+
+## CRUX Linux
+
+=> https://crux.nu
+
+A somewhat obscure Linux distro that inspired the creation of Arch Linux.
+
+### Pros
+* extremely simple package format and package manager.
+* easy to setup you're own package repository (necessary, since like KISS, not that many packages exist in the repos).
+
+### Cons
+* Sparse community. not that many people use it, sadly.
+* *most* packages are missing proper footprint/md5sums.
+* CRUX only officially supports the x86_64 architecture.
 
 ## Void Linux
 
 => https://voidlinux.org
 
 ### Pros
-- Runs on many architectures.
-- Ability to choose between `glibc` and `musl`.
-- uses `runit`, not systemd.
-
-## CRUX Linux
-
-=> https://crux.nu
-
-### Pros
-- extremely simple package format and package manager.
-- easy to setup you're own package repository (necessary, since like KISS, not that many packages exist in the repos).
+* Runs on many architectures.
+* You get the ability to choose between glibc and musl.
+* Void uses runit, not systemd.
 
 ### Cons
-- sparse community. not that many people use it, sadly.
-- **most** packages are missing proper footprint/md5sums.
- 
+* Void uses runit, not systemd.
+* On the raspberry pi (I'm not sure if it's the case on other platforms), many important packages are bricked (for example, OpenGL drivers).
+
 ## AwesomeWM
 
-TODO: link
+=> https://github.com/awesomeWM/awesome
 
 ### Pros
-- since a lot of Awesome's behaviour and aesthetics can be tweaked via it's Lua API, Awesome can be anything you want it to be.
-- lots of layouts to choose from, including tiling and floating.
+* Virtually everything in Awesome can be changed via its Lua configuration.
+* lots of layouts to choose from, including tiling and floating.
 
 ### Cons
-- due to configuration being done in a programming language, executed at runtime, I find Awesome has a tendency to be a bit laggy at times.
-- no support for manual tiling... yet. Not a problem for me personally but I've heard lots of other ricers complaining about this.
+* due to configuration being done in a programming language, executed at runtime, I find Awesome has a tendency to be a bit laggy at times.
+* no support for manual tiling... yet. Not a problem for me personally but I've heard lots of other ricers complaining about this.
+* steep learning curve when it comes to configuration.
 
 ## DWM
 
 => https://dwm.suckless.org/
 
 ### Pros
-- Configuration is in the source. This is precisely what makes dwm so extensible: the fact that the configuration is a part of the code means that you can call custom C functions from your config and from X11.
-- Don't like tiling? dwm has a builtin floating features.
+* Configuration is in the source. This is precisely what makes dwm so extensible: the fact that the configuration is a part of the code means that you can call custom C functions from your config and from X11.
+* Don't like tiling? dwm has a builtin floating features.
 
 ### Cons
-- A bit annoying to recompile every time a configuration value is changed.
-- Many users (like, uh, me) found dwm hard to use due to the fact that it ships with a minimal set of features, and patches must be applied to use certain features (such as a scratchpad). I recommend using [Luke Smith's setup](https://github.com/LukeSmithxyz) as a starting point, and to build up from there. Optionally, you can use [Mitch Weaver's setup](https://github.com/mitchweaver/suckless).
-- The default bar, included with dwm, can be difficult to customize.
-- Polybar doesn't work too well with it by default. Usually, you'll have to add `override-redirect = true` to you're Polybar config. Sometimes it's worse.
+* A bit annoying to recompile every time a configuration value is changed.
+* Many users (like, uh, me) found dwm hard to use due to the fact that it ships with a minimal set of features, and patches must be applied to use certain features (such as a scratchpad). I recommend using [Luke Smith's setup](https://github.com/LukeSmithxyz) as a starting point, and to build up from there. Optionally, you can use [Mitch Weaver's setup](https://github.com/mitchweaver/suckless).
+* The default bar, included with dwm, can be difficult to customize.
+* Polybar doesn't work too well with it by default. Usually, you'll have to add `override-redirect = true` to you're Polybar config. Sometimes it's worse.
+* Made by suckless.org. Not an issue until you realize that at least one member of their team is a Nazi sympathizer.
 
 ## sowm
 
 => https://github.com/dylanaraps/sowm
 
+Yet another minimal floating window manager created by the author of KISS Linux and inspired by DWM.
+
 ### Pros
-- It's FLOATING.
-- It has it's configuration in the source.
-- Very simple and readable source code, which makes it ridiculously easy to modify.
-- No borders (without patches).
+* It's FLOATING only.
+* It has it's configuration in the source.
+* Very simple and readable source code, which makes it ridiculously easy to modify.
+* No borders (without patches).
 
 ### Cons
-- it's FLOATING.
-- It has it's configuration in the source.
-- No borders (without patches).
-- No EWMH support.
+* It's FLOATING only.
+* It has it's configuration in the source.
+* No borders (without patches).
+* No EWMH support.
+* No ICBM-err, I mean ICCCM support.
 
 ## 2bwm
 
+=> https://github.com/venam/2bwm
+
+A XCB-based window manager which has the distinction of giving each window two borders.
+
 ### Pros
-- Hey, two borders!!
-- Although it's floating, you can manage most window-related tasks with the keyboard alone.
+* Hey, two borders!!
+* Although it's floating, you can manage most window-related tasks with the keyboard alone.
 
 ### Cons
-- It has it's configuration in the (IMO poorly-formatted) source.
-
+* It has it's configuration in the (IMO poorly-formatted) source.
+* It can also be configured via .Xresources, which isn't much better than configuring the source.
 
 ## Alacritty
 
 => https://github.com/jwilm/alacritty
 
 ### Pros
-- GPU rendered, which makes this terminal blazingly fast - provided, of course, you have a good GPU in the first place.
+* GPU rendered, which makes this terminal blazingly fast - provided, of course, you have a good GPU in the first place.
+* Sane defaults means new users usually won't have to change a lot in the configuration.
 
 ### Cons
-- If you don't have a good GPU, or if you are on a platform that doesn't support OpenGL (like my Raspberry Pi Zero), alacritty doesn't work.
-- Configuration is in YAML. This may be a good or bad thing depending on whether you're a YAML fan, but in my experience editing yaml files can be extremely tedious.
+* If you don't have a good GPU, or if you are on a platform that doesn't support OpenGL (like my Raspberry Pi Zero), alacritty doesn't work.
+* Configuration is in YAML. This may be a good or bad thing depending on whether you're a YAML fan, but in my experience editing yaml files can be extremely tedious.
 
 ## XTerm
-- It Just Works™.
-- By default, xterm is extremely ugly, which tends to discourage new users from using it.
-- Huge, at about 65K lines of code. Compare to (unpatched) st, which is just 5K loc.
-- xterm can be Very Slow (depending on what you're doing).
-- Configuration is in an esoteric configuration language commonly known as Xresources.
 
-TODO: rewrite the next three sections.
-### misc
-- `loksh`: an implementation of the Korn Shell that's way better than `bash`. `bash`: 1.1M, `loksh`: 241K
-- `mksh`: like `loksh`, but with some extra features such as `HERESTRINGS`.
-- [`ly`](https://github.com/cyglom/ly): a minimal console-based display manager that, as a bonus, has a cool DOOM animation.
-- [`slock`](https://tools.suckless.org/slock): the simplest lockscreen that I know of.
-- `scdoc`: A markup format that compiles to mandoc.
-- [`lcharmap`](https://github.com/lptstr/lcharmap): a little utility like the Windows `charmap.exe` ported to Linux.
-- [`rsfetch`](https://github.com/rsfetch/rsfetch): a blazingly fast (<5ms) fetch program.
+Possibly one of the oldest graphical programs on Linux, XTerm was actually made before the creation of Xorg! Because of its age, it has acquired a good deal of historical baggage and with it, (not undeserved) reputation for being slow, bloated, and ugly.
 
-### Programming languages
-- `C`: yep, raw C is the still the best language on earth, contrary to the opinion of some jAvAsCrIpT heretics.
-- `Rust`: best described as a modern version of C++ obsessed with memory safety. Great when you're building something
-that needs to be robust.
-- `PowerShell`: not quite a shell - more of an interpreted language often mistaken for a shell.
-- `Zig`: a (WIP) language that aims to replace C.
-- `Lua`: the languages simplicity makes Lua ideal for small programs and "scripts" -- unfortunately, the standard library is rather sparse.
+=> https://st.suckless.org/ St's homepage, with a criticism of XTerm.
 
-## Some fonts
-- `ttyp0`: a better version of `misc-fixed`.
-- [`cozette`](https://github.com/slavfox/Cozette): a comfy font derived from Dina/proggy and heavily influenced by creep.
+### Pros
+* It Just Works™.
+* That's all.
+
+### Cons
+* By default, xterm is extremely ugly, which tends to discourage new users from using it.
+* Huge, at about 65K lines of code. Compare to (unpatched) st, which is just 5K loc.
+* xterm can be Very Slow (depending on what you're doing).
+* Configuration is in an esoteric configuration language commonly known as Xresources.
+
+## mksh and loksh
+
+Two shells, both implementations of the Korn Shell.
+
+Loksh is essentially a linux version of OpenBSD's oksh, and mksh is of the MirBSD project.
+
+=> https://github.com/dimkr/loksh  loksh's GitHub page
+=> https://www.mirbsd.org/mksh.htm mksh's homepage
+
+Some benefits are mksh outlined by this Reddit comment by u/_viz_:
+
+=> https://old.reddit.com/r/unixporn/comments/g0qj41/dwm_accented/fnczlur/
+
+> ...i have been using mksh for well over a year now. switched to it because it is faster than other shells ive tried in the past (mainly zsh, bash) and it was a lot easier to configure, no stupid inbuilt stuff that you have to understand in your PS1 for example, you just run a function so you use your previous knowledge instead of learning something new which is time saved in my part.
+>
+> it has the best tab complete behaviour imo -- complete command if it is the first word, otherwise complete file. i find over-the-top completion like in fish/zsh/bash makes me counter-productive as i often end up thinking why the completion engine didn't work like i thought it would.
+>
+> ksh also has a bit nicer syntax than bourne shell; being able to use {} instead of do,done in for and in,esac in case. they are handy when you're writing something really quick in interactive usage.
+>
+> more on the time saved part, since mksh doesn't have much to configure in terms of interactive usage, you end up spending less time fiddling with it and more time using it. interactive niceties that is mksh specific, that i use, are set -o vi and directory aliases (mine - http://0x0.st/iQTO.txt), the latter being immensely helpful if you have deeply nested directories. for example, you can alias ~/doc to d, when you want to expand to ~/doc, you simply write ~d instead. 
+>
+> it also comes in handy when you want to script sometimes since it has associative arrays and lists. it has a healthy amount of additions over posix sh but not too much.
+> 
+> as a bonus, mksh is super fun to golf in :P -- foldl in mksh http://0x0.st/iQTV.txt
+
+## ly
+
+=> https://github.com/nullgemm/ly
+
+Ly is a lightweight TUI display manager.
+
+### Pros
+* Text only, no X11. Keyboard-driven interface.
+* Doesn't require systemd, but works well with it anyway.
+* Works on BSD as well as Linux.
+* As a bonus, it has a neat DOOM animation!
+
+### Cons
+* Text only, no X11. Keyboard-driven interface.
+* Unfortunately, it has a nea^Wbloated DOOM animation.
+* No fancy avatars, etc.
+
+## slock
+
+=> http://tools.suckless.org/slock/
+
+An extremely simple screen locker for X11. When invoked, it simply grabs all the keys and colors the entire screen to a color (by default, black). To unlock, the correct password is entered and <Enter> is pressed. If the correct password is given, the screen is unlocked; otherwise, slock will simply color the screen red to indicate the invalid password. slock will display *nothing*, not even a text field or, say, the current time.
+
+### Pros
+* SIMPLE.
+* No unnecessary screen clutter.
+
+### Cons
+* SIMPLE.
+* Slock doesn't display the current time.
+* Slock doesn't display the current user.
+* To another user, there is no obvious indication that the screen is currently locked, or what to do to unlock it. But maybe that's a good thing?
+* Configuration is in the source.
+
+## scdoc
+
+=> https://git.sr.ht/~sircmpwn/scdoc              scdoc's sr.ht repository
+=> https://drewdevault.com/2018/05/13/scdoc.html  Drew Devault's introduction to scdoc
+
+scdoc is:
+* a markup format that compiles to troff, and is intended to be used to write manpages.
+* a utility that does the conversion.
+
+scdoc is incredibly useful for writing manpages. Having a semi-familiar syntax that very closely resembles markdown (with a few exceptions), it's just more *pleasant* to write in it than in troff.
+
+Consider the following scdoc document:
+
+```
+myutility(1)
+
+# NAME
+
+*myutility* [_OPTION_]... [_FILE_]
+
+# DESCRIPTION
+
+Do awesome things.
+
+# OPTIONS
+
+*-h,  --help*
+	Print nothing and exit.
+
+*-V, --version*
+	Print "myutility v1.0" and exit.
+
+# REPORTING BUGS
+
+Don't.
+
+# COPYRIGHT
+
+Copyright (c) 1965-2020 Mister Sir.
+myutility is licensed under no license in particular.
+
+# SEE ALSO
+
+The full documentation for *myutility* is not maintained as a Texinfo manual.
+If the *info* and *myutility* programs are properly installed on your system,
+the command
+
+	*info myutility*
+
+should not give you access to the complete manual.
+```
+
+Compare that to the result of converting it to troff:
+
+```
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.nh
+.ad l
+.\" Begin generated content:
+.TH "myutility" "1" "2020-10-27"
+.P
+.SH NAME
+.P
+\fBmyutility\fR [\fIOPTION\fR]... [\fIFILE\fR]
+.P
+.SH DESCRIPTION
+.P
+Do awesome things.
+.P
+.SH OPTIONS
+.P
+\fB-h,  --help\fR
+.RS 4
+Print nothing and exit.
+.P
+.RE
+\fB-V, --version\fR
+.RS 4
+Print "myutility v1.0" and exit.
+.P
+.RE
+.SH REPORTING BUGS
+.P
+Don't.
+.P
+.SH COPYRIGHT
+.P
+Copyright (c) 1965-2020 Mister Sir.
+myutility is licensed under no license in particular.
+.P
+.SH SEE ALSO
+.P
+The full documentation for \fBmyutility\fR is not maintained as a Texinfo manual.
+If the \fBinfo\fR and \fBmyutility\fR programs are properly installed on your system,
+the command
+.P
+.RS 4
+\fBinfo myutility\fR
+.P
+.RE
+should not give you access to the complete manual.
+```
+
+Comment should be unnecessary.
+
+### Pros
+* Very readable syntax.
+* More or less writeable syntax.
+* The command-line utility is written in C, and has no dependencies.
+* The command-line utility is very fast.
+
+### Cons
+* The scdoc format is *like* Markdown, but *isn't* Markdown. There are an abundance of subtle differences and quirks that will bite you if you aren't aware of them.
+* The author of scdoc seems to have a religious hatred for spaces, and scdoc will reject any documents that commit the unpardonable crime of not using tabs for alignment.
+* The syntax for a table is awkward and unintuitive.
+
+## lcharmap
+
+=> https://github.com/lptstr/lcharmap
+
+Lcharmap is a small utility to see information about Unicode codepoints. (TODO)
+
+## aerc
+
+=> https://git.sr.ht/~sircmpwn/aerc  aerc's sr.ht repository
+=> https://aerc-mail.org/            aerc's homepage
+
+Aerc is yet another TUI email client. Created by the author of scdoc, it was pretty much designed for those who use git-send-email.
+
+### Pros
+* Aerc has the ability to view diffs right in the client, meaning that you won't have to switch to the terminal when, say, looking through patches in a mailing list.
+* Intuitive keybindings make aerc a bit easier to use than (neo)mutt.
+* Aerc has an extremely helpful setup wizard, which makes it very easy to quickly setup an account.
+* Tabs allow you to compose email while referencing other emails.
+* Aerc checks for email asynchronously, which ensures the UI always feels snappy.
+* A lot more that I haven't discovered yet.
+
+### Cons
+* Aerc is still in beta. Certain features don't seem to be implemented yet (e.g. email signatures).
+* Due to having an embedded terminal session (aerc uses less(1) to view emails, and $EDITOR to compose them), aerc can be unusably laggy on slow hardware (such as my Raspberry Pi).
+
+## catgirl
+
+=> https://git.causal.agency/catgirl/about/
+
+A minimal but usable TLS-only IRC client for the terminal.
+
+### Pros
+* TLS-only.
+* IRC nick colors persist across nick changes.
+* catgirl's prompt will change depending on what's being typed at the moment. If the text in the input field is a command, the prompt will be an empty string. If the input begins with "/me", the prompt changes to "* <user> "; otherwise, the prompt is a simple "<user> ".
+* When scrolling up, catgirl keeps the latest messages in view.
+* A few others (I haven't really used catgirl often enough to find any more).
+
+### Cons
+* TLS-only. catgirl will simply not connect to servers which don't have TLS support.
+* When scrolling up, catgirl keeps the latest messages in view, which can be annoying if catgirl's window is short.
+* No message history for the input field (<ArrowUp> and <ArrowDown> simply scroll through channel history), because according to catgirl's author, "IRC is not a shell."
+* No advanced weechat-y features (like triggers).
+* No support for multiple IRC servers. (The author encourages users to use a terminal multiplexer, such as screen/tmux in conjunction with catgirl for multi-network functionality.)
+* No automatic server reconnection -- when connection to the IRC server is lost, catgirl simply exits(!)
+* No support for CTCP (this can be either a good thing or a bad thing depending on your needs and preferences).
+* There's no way to configure catgirl to show message timestamps.
+* No plugin system.
+
+## birch
+
+=> https://github.com/dylanaraps/birch
+
+An IRC client written in bash, this monstrosity is rather primitive but *extremely* impressive for a TUI program written in that language.
+
+### Pros
+* None that I can think of, to be honest. birch is fine if your needs are small but falls apart quickly when you want other common features.
+
+### Cons
+* No support for TLS IRC.
+* No support for CTCP.
+* No support for IRC colors (birch doesn't even strip them -- it just displays some funny characters).
+* No plugin system.
+* No configuration file (birch must be configured via command-line options).
+* birch, being written in bash, can be quite slow at times.
+* The whole thing is basically one gross hack. (Not that it matters from a user's perspective.)
+* birch suffers from occasional visual glitches.
+* Still a bit immature. As a result, there are still many bugs.
