@@ -378,7 +378,7 @@ Aerc is yet another TUI email client. Created by the author of scdoc, it was pre
 * A lot more that I haven't discovered yet.
 
 ### Cons
-* Aerc is still in beta. Certain features don't seem to be implemented yet (e.g. email signatures).
+* Aerc is still in beta. Certain features don't seem to be implemented yet.
 * Due to having an embedded terminal session (aerc uses less(1) to view emails, and $EDITOR to compose them), aerc can be unusably laggy on slow hardware (such as my Raspberry Pi).
 
 ## catgirl
