@@ -205,6 +205,11 @@ Some benefits are mksh outlined by this Reddit comment by u/_viz_:
 > 
 > as a bonus, mksh is super fun to golf in :P -- foldl in mksh http://0x0.st/iQTV.txt
 
+### Some mksh cons
+* Binary history format(?!); thus, it's impossible to manipulate/view mksh's history with standard UNIX tools.
+* The history in interactive mksh will periodically refresh, pulling in command history from other running mksh sessions. Some may enjoy this but it drives me crazy.
+* As of November 2020, mksh has no support for Ctrl-L.
+
 ## ly
 
 => https://github.com/nullgemm/ly
