@@ -1,0 +1,39 @@
+#!/bin/sh
+#
+# (c) Kiëd Llaentenn <kiedtl@tilde.team>
+# See the COPYING file for copyright information.
+
+# this file requires a retarded script called "std" that I
+# keep in ~/bin/lib. get them from the link below and
+# keep them in $PATH.
+# https://github.com/kiedtl/bin
+
+. $(which std)
+
+def_db_path="$(which $0)"
+def_db_path="${def_db_path%/*}"
+def_db_path="${def_db_path}/logs.db"
+
+: ${VIA_DB_PATH:=$def_db_path}
+: ${VIA_HOST:=team.tilde.chat}
+: ${VIA_PORT:=6697}
+: ${VIA_NICK:=VI-A}
+: ${VIA_CHANNELS:=#gemini}
+
+log "database path: $VIA_DB_PATH"
+log "bot host: $VIA_HOST:$VIA_PORT"
+log "nickname: $VIA_NICK, joining $VIA_CHANNELS"
+
+[ -f "$VIA_DB_PATH" ] || {
+    log "initializing database"
+    mkdir -p "${VIA_DB_PATH%/*}"
+    touch "$VIA_DB_PATH"
+
+    litterbox -d "$VIA_DB_PATH" -i \
+        || die "could not initialize db"
+}
+
+log "starting bot"
+litterbox -d "$VIA_DB_PATH" \
+    -h "$VIA_HOST"  -p "$VIA_PORT" -n "$VIA_NICK" \
+    -j "${VIA_CHANNELS}" || die "litterbox failed"
