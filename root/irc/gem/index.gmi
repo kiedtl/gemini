@@ -77,9 +77,19 @@ Wrap search results at <chars> characters. This is not a search filter so much a
 
 ## TODO
 
-* Handle invalid width values correctly.
-* Handle invalid values for search filters correctly.
-* Add an "Acknowledgments" section.
-* Rewrite scoop in Lua; use to handle download/today/search pages.
 * Patch litterbox to handle BATCH IRC messages correctly.
+* Rewrite scoop in Lua; use to handle download/today/search pages.
 * Import ~tomasino's logs.
+
+
+## Acknowledgments
+
+Thanks to:
+
+* ~tomasino, for assisting with the search documentation and for suggesting this mini-project.
+
+This project uses:
+
+* A patched version of litterbox [0] to log, index, and search IRC events:
+
+=> https://git.causal.agency/litterbox
