@@ -6,3 +6,4 @@ of my site here.
 => https://tilde.team/~kiedtl My HTTPS homepage
 => ./k1ss                     A mirror for KISS Linux's website (k1ss.org)
 => ./toolbox.gmi              A list of tools and utilities that I find useful.
+=> irc/gem/                   View IRC logs for #gemini on irc.tilde.chat.
