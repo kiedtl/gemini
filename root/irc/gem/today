@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+# (c) Kiëd Llaentenn <kiedtl@tilde.team>
+# See the COPYING file for copyright information.
+
+today="$(date '+%Y-%m-%d')"
+width='' # wrapping width
+
+main() {
+    [ "$QUERY_STRING" ] || { printf "10 Wrap width:\r\n"; exit 0; }
+    width="$QUERY_STRING"
+
+    # reuse search page instead of providing a separate implementation
+    printf '30 ./search?:width=%d%%20:after=%s\r\n' "$width" "$today"
+
+    # obsolete code
+    #printf '20 text/gemini; lang=en\r\n'
+    #printf '# #gemini IRC logs\n'
+    #printf '\n'
+    #printf 'Logs from #gemini on irc.tilde.chat since %s.\n' "$today"
+    #printf 'Wrapping logs at %d characters.\n' "$width"
+    #printf '\n'
+    #printf '```\n'
+    #$scoop_path -s -firc -d "$db_path" -c "$channel" -a "$today" | \
+    #    while read -r msg; do process_message "$msg" "$width"; done
+    #printf '```\n'
+}
+
+main "$@"

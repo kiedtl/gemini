@@ -1,0 +1,127 @@
+#!/bin/bash
+#
+# (c) Kiëd Llaentenn <kiedtl@tilde.team>
+# See the COPYING file for copyright information.
+
+format() {
+    printf '%s  %12s │ %s\n' "${1%:*}" "$2" "$3"
+}
+
+lastuser='/'
+lastdate='/'
+
+begin_process_messages() {
+    printf '```\n'
+}
+
+end_process_messages() {
+    printf '```\n'
+}
+
+# from https://github.com/dylanaraps/birch
+# (c) 2019-2020 Dylan Araps
+# TODO: strip IRC escape sequences
+process_message() {
+    rawmsg="$1"
+    width="$2"
+    fields=() word='' from='' whom=''
+
+    # grab the first "word of the IRC message, as we know
+    # that will be the timestamp of the message.
+    datetime=${rawmsg%% *}
+    IFS='TZ' read -r date time <<< "${datetime#@time=}"
+    rawmsg="${rawmsg/"$datetime"}"
+    rawmsg="${rawmsg# }"
+
+    # If the next "word" in the raw IRC message contains
+    # ':', '@' or '!', split it and grab the sending user
+    # nick.
+    [[ "${rawmsg%% *}" == *[:@!]* ]] && {
+        from=${rawmsg%% *}
+        IFS='!@' read -r whom _ <<< "${from#:}"
+    }
+
+    # Read the rest of the message character by character
+    # until we reach the first ':'. Once the first colon
+    # is hit, break from the loop and assume that everything
+    # after it is the message contents.
+    #
+    # Each word prior to ':' is appended to an array so that
+    # we may use each portion.
+    while IFS= read -d '' -rn 1 c; do case $c in
+        ' ') [[ $word ]] && fields+=("$word") word= ;;
+          :) break ;;
+          *) word+=$c ;;
+    esac; done <<< "${rawmsg/"$from"}"
+
+    # Grab the message contents by stripping everything we've
+    # found so far above.
+    mesg=${rawmsg/"${from:+$from }${fields[*]} "}
+    mesg=${mesg#:}
+    mesg=$(fold -sw "$width" <<< "$mesg")
+    mesg=${mesg//$'\n'/$'\n'                    │ }
+
+    # If the field after the typical dest is a channel, use
+    # it in place of the regular field. This correctly
+    # catches MOTD and join messages.
+    case ${fields[2]} in
+        \#*|\*) fields[1]=${fields[2]} ;;
+             =) fields[1]=${fields[3]} ;;
+    esac
+
+    whom=${whom:-$nick}
+    dest=${fields[1]:-$channel}
+
+    # If the message itself contains ACTION with surrounding
+    # '\001', we're dealing with '/me'. Simply set the type
+    # to 'ACTION' so we may specially deal with it below.
+    [[ $mesg == *$'\001ACTION'*$'\001'* ]] &&
+        fields[0]=ACTION mesg=${mesg/$'\001ACTION' }
+
+    # If we're going into a new day, print a header.
+    if [[ "$date" != "$lastdate" ]]; then
+        end_process_messages
+        printf '\n## %s\n\n' "$date"
+        begin_process_messages
+        lastdate="$date"
+    fi
+
+    # The first element in the fields array points to the
+    # type of message we're dealing with.
+    case ${fields[0]} in
+        PRIVMSG)
+            user="$whom"
+            [ "$lastuser" = "$whom" ] && user=""
+            format "$time" "$user" "${mesg}"
+            lastuser="$whom"
+        ;;
+
+        ACTION)
+            format "$time" '*' "$whom ${mesg/$'\001'}"
+        ;;
+
+        NOTICE)
+            format "$time" 'NOTE' "$mesg"
+        ;;
+
+        QUIT)
+            format "$time" '<--' "$whom has quit ${dest//$dest/$channel}"
+        ;;
+
+        PART)
+            format "$time" '<--' "$whom has left $dest"
+        ;;
+
+        JOIN)
+            format "$time" '-->' "$whom has joined $mesg"
+        ;;
+
+        NICK)
+            format "$time" '--@' "$whom is now known as $mesg"
+        ;;
+
+        *)
+            format "$time" '--' "$mesg"
+        ;;
+    esac
+}

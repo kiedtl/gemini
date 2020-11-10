@@ -1,0 +1,85 @@
+# Gemini IRC logs
+
+Here are some links to view logs from the unofficial Gemini IRC channel on irc.tilde.chat.
+
+=> ./today     Today's logs
+=> ./download  Download logs in plain text
+=> ./search    Search logs
+
+
+Report any issues to kiedtl＠tilde.team (do not copy-paste).
+
+
+## Search syntax
+
+A special syntax can be used to employ search filters in your queries. This may be somewhat familiar from other search engines. The syntax is ":filter=value :filter2=value [search keywords]"; examples can be found below:
+
+```
+    # search for all instances before November 8, 2020, where a user named
+    # "wdca" joined the channel.
+    :before=2020-11-08 :event=join :nick=wdca
+
+    # search for all messages with the word "amfora"
+    :event=privmsg amfora
+
+    # search all messages, joins, quits, parts, etc. before October 3, 2020 that
+    # contain the word "bombadillo", and limit the number of results to 10.
+    :before=2020-10-03 :limit=10 bombadillo
+```
+
+Below is a list of recognized search filters.
+
+
+### :after=<date>[T<time>]
+
+Search for events that occurred after <date> and <time>. <date> and <time> are in the format of "YYYY-MM-DD" and "HH:MM:SS"; the time is optional, but if it is included, it must be joined to the date with a "T". Example: ":after=2020-11-08T12:45:00".
+
+
+### :before=<date>[T<time>]
+
+Like ":after=", but matches events before the provided date and time.
+
+
+### :date=<date>
+
+Search for events that occurred on <date>. The provided date, as with ":after=" and ":before=", is in the format of "YYYY-MM-DD".
+
+
+### :event=<type>
+
+Only show events of type <type>, where <type> is one of "privmsg", "notice", "action", "join", "part", "quit", "kick", "nick", "topic", "ban", or "unban".
+
+
+### :limit=<limit>
+
+Show only <limit> results.
+
+
+### :nick=<nickname>
+
+Search for events by <nickname>.
+
+
+### :host=<hostname>
+
+Search for events by users with a host matching <hostname>.
+
+
+### :user=<username>
+
+Search for events by users matching <username>.
+
+
+### :width=<chars>
+
+Wrap search results at <chars> characters. This is not a search filter so much as it is a formatting option.
+
+
+## TODO
+
+* Handle invalid width values correctly.
+* Handle invalid values for search filters correctly.
+* Add an "Acknowledgments" section.
+* Rewrite scoop in Lua; use to handle download/today/search pages.
+* Patch litterbox to handle BATCH IRC messages correctly.
+* Import ~tomasino's logs.

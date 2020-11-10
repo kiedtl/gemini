@@ -1,0 +1,126 @@
+#!/bin/bash
+#
+# (c) Kiëd Llaentenn <kiedtl@tilde.team>
+# See the COPYING file for copyright information.
+
+# calling script's directory
+dir="$(command -v "$0")"
+dir="${dir%/*}"
+
+channel='#gemini'
+scoop_path="$dir/../../../src/gemlogs/scoop"
+db_path="$dir/logs.db"
+
+after=      # match messages after <after>
+before=     # match messages before <before>
+date=       # match messages on <date>
+event=      # match <event>: msg, join, part, action, etc
+host=       # match events from users with hostname <host>
+limit=      # show maximum <limit> results
+nick=       # match events from users with nickname <nick>
+search=     # actual search query
+user=       # match events from users with username <user>
+width=60    # wrapping width
+
+# misc functions
+. lib
+
+# parse the search queries.
+parse_query() {
+    q="$1"
+
+    # decode query string
+    # https://stackoverflow.com/a/14000368
+    q="$(awk -niord '{printf RT?$0chr("0x"substr(RT,2)):$0}' RS=%.. <<< "$q")"
+
+    while [ "${q:0:1}" == : ]; do
+        q="${q:1}" # strip :
+        IFS='=' read -r key val <<< "${q%% *}"
+
+        case "$key" in
+            after)  after="$val" ;;
+            before)  before="$val" ;;
+            date)  date="$val" ;;
+            event)  event="$val" ;;
+            host)  host="$val" ;;
+            limit)  limit="$val" ;;
+            nick)  nick="$val" ;;
+            user)  user="$val" ;;
+            width)  width="$val" ;;
+            *)
+                printf '20 text/gemini; lang=en\r\n'
+                printf '# Search query error\n'
+                printf '\n'
+                printf 'Unknown search directive: "%s"\n' "$key"
+                exit 0
+            ;;
+        esac
+
+        # cut off processed portion
+        q="${q/$key=$val}"
+        [ "${q:0:1}" == " " ] && q="${q:1}"
+    done
+
+    # the rest of the query is the search string
+    search="$q"
+}
+
+cons_scoop_cmd() {
+    # construct scoop command, see scoop(1)
+    cmd="$scoop_path"
+
+    cmd="$cmd -s -firc"
+    cmd="$cmd -d '$db_path'"
+    cmd="$cmd -c '$channel'"
+
+    [ -z  "$after" ] || cmd="$cmd -a '${after/T/ }'"
+    [ -z "$before" ] || cmd="$cmd -b '${before/T/ }'"
+    [ -z   "$date" ] || cmd="$cmd -D '$date'"
+    [ -z  "$event" ] || cmd="$cmd -t '$event'"
+    [ -z   "$host" ] || cmd="$cmd -h '$host'"
+    [ -z  "$limit" ] || cmd="$cmd -l '$limit'"
+    [ -z   "$nick" ] || cmd="$cmd -n '$nick'"
+    [ -z   "$user" ] || cmd="$cmd -u '$user'"
+    [ -z "$search" ] || cmd="$cmd '$search'"
+
+    echo "$cmd"
+}
+
+cons_filter_text() {
+    printf 'Options:\n'
+
+    [ -z "$search" ] || printf '* Searching for %s\n' "'$search'"
+    [ -z  "$after" ] || printf '* Matching events after %s\n' "'${after/T/ }'"
+    [ -z "$before" ] || printf '* Matching events before %s\n' "'${before/T/ }'"
+    [ -z   "$date" ] || printf '* Matching events on %s\n' "'$date'"
+    [ -z  "$event" ] || printf '* Matching events of type %s\n' "'$event'"
+    [ -z  "$limit" ] || printf '* Only retrieving %s results\n' "'$limit'"
+    [ -z   "$host" ] || printf '* Only showing users with a hostname of %s' "'$host'"
+    [ -z   "$nick" ] || printf '* Only showing nicknames that match %s\n' "'$nick'"
+    [ -z   "$user" ] || printf '* Only showing events from %s\n' "'$user'"
+
+    printf '* Wrapping messages at %d characters\n' "$width"
+}
+
+main() {
+    [ "$QUERY_STRING" ] || { printf "10 Search query:\r\n"; exit 0; }
+    parse_query "$QUERY_STRING"
+
+    # begin response
+    printf '20 text/gemini; lang=en\r\n'
+
+    printf '# #gemini IRC logs\n'
+    printf '\n'
+    printf '%s\n' "$(cons_filter_text)"
+    printf '\n'
+
+    begin_process_messages
+
+    # shellcheck disable=2046
+    eval $(cons_scoop_cmd) | \
+        while read -r msg; do process_message "$msg" "$width"; done
+
+    end_process_messages
+}
+
+main "$@"

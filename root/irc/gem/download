@@ -1,0 +1,19 @@
+#!/bin/sh -e
+#
+# (c) Kiëd Llaentenn <kiedtl@tilde.team>
+# See the COPYING file for copyright information.
+
+# calling script's directory
+dir="$(command -v "$0")"
+dir="${dir%/*}"
+
+channel='#gemini'
+scoop_path="$dir/../../../src/gemlogs/scoop"
+db_path="$dir/logs.db"
+
+main() {
+    printf '20 text/plain; lang=en\r\n'
+    $scoop_path -s -d "$db_path" -c "$channel"
+}
+
+main "$@"
