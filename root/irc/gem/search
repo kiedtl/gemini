@@ -3,6 +3,10 @@
 # (c) Kiëd Llaentenn <kiedtl@tilde.team>
 # See the COPYING file for copyright information.
 
+VALID_NAME='^[a-zA-Z0-9_\-\[]{}^`\|]*$'
+VALID_DATETIME='^[0-9]{4}-[0-9]{2}-[0-9]{2}(T([0-9]{2}:){2}[0-9]{2})?$'
+VALID_DATE='^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+
 # calling script's directory
 dir="$(command -v "$0")"
 dir="${dir%/*}"
@@ -25,6 +29,14 @@ width=60    # wrapping width
 # misc functions
 . lib
 
+parse_query_error() {
+    printf '20 text/gemini; lang=en\r\n'
+    printf '# Search query error\n\n'
+    [ "$1" ] && printf '%s\n' "$1"
+    [ "$2" ] && printf '%s\n' "$2"
+    exit 0
+}
+
 # parse the search queries.
 parse_query() {
     q="$1"
@@ -38,21 +50,41 @@ parse_query() {
         IFS='=' read -r key val <<< "${q%% *}"
 
         case "$key" in
-            after)  after="$val" ;;
-            before)  before="$val" ;;
-            date)  date="$val" ;;
+            after|before)
+                grep -qE "$VALID_DATETIME" <<< "$val" || \
+                    parse_query_error "Invalid date/time: '$val'" \
+                        "Proper date and time format: $VALID_DATETIME"
+                eval $key="$val"
+            ;;
+            date)
+                grep -qE "$VALID_DATE" <<< "$val" || \
+                    parse_query_error "Invalid date: '$val'" \
+                        "Proper datetime format: $VALID_DATE"
+                date="$val"
+            ;;
             event)  event="$val" ;;
             host)  host="$val" ;;
-            limit)  limit="$val" ;;
-            nick)  nick="$val" ;;
-            user)  user="$val" ;;
-            width)  width="$val" ;;
+            limit)
+                [ "$((val))" = 0 ] && {
+                    parse_query_error "Invalid results limit: '$val'"
+                }
+
+                limit="$val"
+            ;;
+            nick|user)
+                grep -q "$VALID_NAME" <<< "$val" || \
+                    parse_query_error "Invalid nickname/username: '$val'" \
+                        "Valid IRC nickname: $VALID_NAME"
+                eval $key="$val"
+            ;;
+            width)
+                width="$val"
+
+                # if width == NaN || width == 0, width=60
+                [ "$((width))" = 0 ] && width="60"
+            ;;
             *)
-                printf '20 text/gemini; lang=en\r\n'
-                printf '# Search query error\n'
-                printf '\n'
-                printf 'Unknown search directive: "%s"\n' "$key"
-                exit 0
+                parse_query_error "Unknown search filter: '$key'"
             ;;
         esac
 
@@ -99,7 +131,7 @@ cons_filter_text() {
     [ -z   "$nick" ] || printf '* Only showing nicknames that match %s\n' "'$nick'"
     [ -z   "$user" ] || printf '* Only showing events from %s\n' "'$user'"
 
-    printf '* Wrapping messages at %d characters\n' "$width"
+    printf '* Wrapping messages at %s characters\n' "$width"
 }
 
 main() {

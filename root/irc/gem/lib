@@ -23,7 +23,6 @@ end_process_messages() {
 # TODO: strip IRC escape sequences
 process_message() {
     rawmsg="$1"
-    width="$2"
     fields=() word='' from='' whom=''
 
     # grab the first "word of the IRC message, as we know

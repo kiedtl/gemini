@@ -11,7 +11,9 @@ main() {
     width="$QUERY_STRING"
 
     # reuse search page instead of providing a separate implementation
-    printf '30 ./search?:width=%d%%20:after=%s\r\n' "$width" "$today"
+    # use %s for the $width specifier, as $width could potentially be
+    # an invalid number. the search page will sanitize that though.
+    printf '30 ./search?:width=%s%%20:after=%s\r\n' "$width" "$today"
 
     # obsolete code
     #printf '20 text/gemini; lang=en\r\n'
