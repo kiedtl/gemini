@@ -1,14 +1,15 @@
 #!/bin/bash
 #
 # (c) Kiëd Llaentenn <kiedtl@tilde.team>
-# See the COPYING file for copyright information.
+# See the COPYING file for copyright information regarding
+# the license of this unholy mess.
 
 format() {
     printf '%s  %12s │ %s\n' "${1%:*}" "$2" "$3"
 }
 
-lastuser='/'
-lastdate='/'
+lastuser=''
+lastdate='none'
 
 begin_process_messages() {
     printf '```\n'
@@ -80,7 +81,7 @@ process_message() {
     # If we're going into a new day, print a header.
     if [[ "$date" != "$lastdate" ]]; then
         end_process_messages
-        printf '\n## %s\n\n' "$date"
+        printf '\n\n## %s\n\n' "$date"
         begin_process_messages
         lastdate="$date"
     fi
