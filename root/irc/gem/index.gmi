@@ -2,9 +2,9 @@
 
 Here are some links to view logs from the unofficial Gemini IRC channel on irc.tilde.chat.
 
-=> ./today     Today's logs
-=> ./download  Download logs in plain text
-=> ./search    Search logs
+=> ./today.gmi   Today's logs
+=> ./logs.txt    Download logs in plain text
+=> ./search.gmi  Search logs
 
 
 Report any issues to kiedtl＠tilde.team (do not copy-paste).
