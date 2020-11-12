@@ -1,0 +1,18 @@
+#!/bin/bash
+
+printf '20 text/gemini; lang=en\r\n'
+printf '# Analytics with CGI\n'
+printf '\n'
+printf '* GEMINI_URL:      %s\n' "$GEMINI_URL"
+printf '* SERVER_NAME:     %s\n' "$SERVER_NAME"
+printf '* SERVER_PROTOCOL: %s\n' "$SERVER_PROTOCOL"
+printf '* SERVER_SOFTWARE: %s\n' "$SERVER_SOFTWARE"
+printf '* SCRIPT_NAME:     %s\n' "$SCRIPT_NAME"
+printf '* REMOTE_ADDR:     %s\n' "$REMOTE_ADDR"
+printf '* REMOTE_HOST:     %s\n' "$REMOTE_HOST"
+printf '* REMOTE_PORT:     %s\n' "$REMOTE_PORT"
+printf '* QUERY_STRING:    %s\n' "$QUERY_STRING"
+printf '* PATH_INFO:       %s\n' "$PATH_INFO"
+printf '* AUTH_TYPE:       %s\n' "$AUTH_TYPE"
+printf '* TLS_CLIENT_HASH: %s\n' "$TLS_CLIENT_HASH"
+printf '* REMOTE_USER:     %s\n' "$REMOTE_USER"
