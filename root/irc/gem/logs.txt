@@ -1,19 +1,16 @@
-#!/bin/sh -e
-#
-# (c) Kiëd Llaentenn <kiedtl@tilde.team>
-# See the COPYING file for copyright information.
+#!/usr/bin/env lua
+--
+-- (c) Kiëd Llaentenn <kiedtl@tilde.team>
+-- See the COPYING file for copyright information.
 
-# calling script's directory
-dir="$(command -v "$0")"
-dir="${dir%/*}"
+local scoop_path = "/home/kiedtl/pub/gemini/src/gemlogs/scoop"
+local db_path = "/home/kiedtl/pub/gemini/root/irc/gem/logs.db"
 
-channel='#gemini'
-scoop_path="$dir/../../../src/gemlogs/scoop"
-db_path="$dir/logs.db"
+local cmd = string.format("%s -d '%s'", scoop_path, db_path)
+local scoop = assert(io.popen(cmd, 'r'))
+local out = assert(scoop:read('a'))
 
-main() {
-    printf '20 text/plain; lang=en\r\n'
-    $scoop_path -s -d "$db_path" -c "$channel"
-}
+io.write("20 text/plain; lang=en\r\n")
+io.write(out)
 
-main "$@"
+scoop:close()

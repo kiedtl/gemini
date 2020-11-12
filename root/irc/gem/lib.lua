@@ -1,4 +1,3 @@
-local inspect = require('inspect')
 local lib = {}
 
 function lib.printf(fmt, ...)
@@ -6,7 +5,7 @@ function lib.printf(fmt, ...)
 end
 
 function lib.format_message(time, pref, msg)
-	lib.printf("%s  %12s │ %s\n", time, pref, msg)
+	lib.printf("%s  %12s │ %s\n", time, pref:sub(1, 12), msg)
 end
 
 function lib.last_gmatch(s, pat)
@@ -42,6 +41,9 @@ function lib.process_message(rawmsg, foldwidth)
 	local whom = ""
 	local dest = ""
 
+	-- Remove the trailing \r\n from the raw message.
+	rawmsg = rawmsg:gsub("\r\n$", "")
+
 	-- grab the first "word" of the IRC message, as we know that
 	-- will be the timestamp of the message
 	local date, time = string.gmatch(rawmsg, "@time=([%d-]+)T([%d:]+)Z")()
@@ -70,12 +72,21 @@ function lib.process_message(rawmsg, foldwidth)
 		ctr = ctr + 1
 	end
 
-	-- Fold message to width.
+	-- Fold message to width at words. This is basically a /bin/fold
+	-- implementation in Lua.
 	local mesg = ""
-	for w in string.gmatch(msg, "([^ ]+%s?)") do
+	for w in string.gmatch(msg, "([^ ]+%s?)") do -- iterate over each word
+		-- get the last line in message.
 		local last_line = lib.last_gmatch(mesg..w.."\n", "(.-)\n")
+
+		-- only append a newline if the line's width is greater than
+		-- zero. This is to prevent situations where a long word (say,
+		-- a URL) is put on its own line with nothing on the line
+		-- above.
 		if (last_line or mesg..w):len() >= foldwidth then
-			mesg = mesg .. "\n"
+			if mesg:len() > 0 then
+				mesg = mesg .. "\n"
+			end
 		end
 		mesg = mesg .. w
 	end
@@ -101,7 +112,7 @@ function lib.process_message(rawmsg, foldwidth)
 	end
 
 	-- If we're going into a new day, print a header.
-	if not lib["last_date"] == date then
+	if not (lib["last_date"] == date) then
 		lib.end_process_messages()
 		lib.printf("\n\n## %s\n\n", date)
 		lib.begin_process_messages()
@@ -116,11 +127,11 @@ function lib.process_message(rawmsg, foldwidth)
 		end,
 		["PRIVMSG"] = function ()
 			local user = whom
-			if not whom == lib["last_user"] then
+			if whom == lib["last_user"] then
 				user = ""
 			end
 			lib.format_message(time, user, mesg)
-			lib["last_user"] = whom
+			--lib["last_user"] = whom
 		end,
 		["ACTION"] = function()
 			lib.format_message(time, "*",
@@ -153,18 +164,14 @@ function lib.process_message(rawmsg, foldwidth)
 	else
 		action()
 	end
-end
 
-function lib.capture(cmd)
-  local f = assert(io.popen(cmd, 'r'))
-  local s = assert(f:read('a'))
-  f:close()
-  return s
-end
-function lib.main()
-	local out = lib.capture('/home/kiedtl/pub/gemini/src/gemlogs/scoop -d/home/kiedtl/pub/gemini/root/irc/gem/logs.db -firc -l22')
-	for i in string.gmatch(out, "(.-)\n") do
-		lib.process_message(i, 40)
+	lib["last_user"] = whom
+
+	-- if messages are "interrupted" by joins, quits, etc., then
+	-- show the nickname for the next message anyway
+	if not (fields[1] == "PRIVMSG") then
+		lib["last_user"] = ""
 	end
 end
+
 return lib

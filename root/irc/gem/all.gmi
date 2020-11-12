@@ -3,9 +3,6 @@
 -- (c) Kiëd Llaentenn <kiedtl@tilde.team>
 -- See the COPYING file for copyright information.
 
-local dates = os.date("*t")
-local today = string.format("%s-%s-%s", dates.year, dates.month, dates.day)
-
 local width = os.getenv("QUERY_STRING")
 if not width then
 	io.write("10 Wrap width:\r\n")
@@ -15,4 +12,4 @@ end
 -- reuse search page instead of providing a separate implementation
 -- use %s for the $width specifier, as $width could potentially be
 -- an invalid number. the search page will sanitize that though.
-io.write(string.format("30 ./search.lua?:width=%s%%20:after=%s\r\n", width, today))
+io.write(string.format("30 ./search.lua?:width=%s\r\n", width))

@@ -1,158 +1,126 @@
-#!/bin/bash
-#
-# (c) Kiëd Llaentenn <kiedtl@tilde.team>
-# See the COPYING file for copyright information.
+#!/usr/bin/env lua
+--
+-- (c) Kiëd Llaentenn <kiedtl@tilde.team>
+-- See the COPYING file for copyright information.
 
-VALID_NAME='^[a-zA-Z0-9_\-\[]{}^`\|]*$'
-VALID_DATETIME='^[0-9]{4}-[0-9]{2}-[0-9]{2}(T([0-9]{2}:){2}[0-9]{2})?$'
-VALID_DATE='^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+local lib = require('lib')
 
-# calling script's directory
-dir="$(command -v "$0")"
-dir="${dir%/*}"
+local DATE_PAT = "%d%d%d%d%-%d%d%-%d%d"
+local DATETIME_PAT = "%d%d%d%d%-%d%d%-%d%dT%d%d:%d%d:%d%dZ"
+local USERNICK_PAT = "^([%w%-%[%]{}%^`%|]+)$"
 
-channel='#gemini'
-scoop_path="$dir/../../../src/gemlogs/scoop"
-db_path="$dir/logs.db"
+local width = 60
+local scoop_path = "/home/kiedtl/pub/gemini/src/gemlogs/scoop"
+local db_path = "/home/kiedtl/pub/gemini/root/irc/gem/logs.db"
 
-after=      # match messages after <after>
-before=     # match messages before <before>
-date=       # match messages on <date>
-event=      # match <event>: msg, join, part, action, etc
-host=       # match events from users with hostname <host>
-limit=      # show maximum <limit> results
-nick=       # match events from users with nickname <nick>
-search=     # actual search query
-user=       # match events from users with username <user>
-width=60    # wrapping width
+function decode_url(url)
+	local function _(h) return string.char(tonumber(h, 16)) end
+	return url:gsub("%%(%x%x)", _)
+end
 
-# misc functions
-. lib
+function parse_query_error(msg, txt)
+	lib.printf("20 text/gemini; lang=en\r\n")
+	lib.printf("# Search syntax error\n\n")
+	if msg then lib.printf("%s\n", msg) end
+	if txt then lib.printf("%s\n", txt) end
+	os.exit(0)
+end
 
-parse_query_error() {
-    printf '20 text/gemini; lang=en\r\n'
-    printf '# Search query error\n\n'
-    [ "$1" ] && printf '%s\n' "$1"
-    [ "$2" ] && printf '%s\n' "$2"
-    exit 0
-}
+function parse_query(query)
+	query = decode_url(query)
 
-# parse the search queries.
-parse_query() {
-    q="$1"
+	local cmd = scoop_path .. " -firc -d '" .. db_path .. "'"
+	local filter_info = "Options:\n"
 
-    # decode query string
-    # https://stackoverflow.com/a/14000368
-    q="$(awk -niord '{printf RT?$0chr("0x"substr(RT,2)):$0}' RS=%.. <<< "$q")"
+	local function cmd_append(flag, val) cmd = cmd .. " -" .. flag .. " '" .. val .. "'" end
+	local function info_append(...) filter_info = filter_info .. "* " .. string.format(...) .. "\n" end
 
-    while [ "${q:0:1}" == : ]; do
-        q="${q:1}" # strip :
-        IFS='=' read -r key val <<< "${q%% *}"
+	for k, v in query:gmatch(":(%w-)=([^%s]+)%s?") do
+		if k == 'after' or k == 'before' then
+			if not v:find(DATETIME_PAT) and not v:find(DATE_PAT) then
+				parse_query_error("Invalid date/time: " .. val)
+			end
 
-        case "$key" in
-            after|before)
-                grep -qE "$VALID_DATETIME" <<< "$val" || \
-                    parse_query_error "Invalid date/time: '$val'" \
-                        "Proper date and time format: $VALID_DATETIME"
-                eval $key="$val"
-            ;;
-            date)
-                grep -qE "$VALID_DATE" <<< "$val" || \
-                    parse_query_error "Invalid date: '$val'" \
-                        "Proper datetime format: $VALID_DATE"
-                date="$val"
-            ;;
-            event)  event="$val" ;;
-            host)  host="$val" ;;
-            limit)
-                [ "$((val))" = 0 ] && {
-                    parse_query_error "Invalid results limit: '$val'"
-                }
+			v = v:gsub("T", " ")
+			v = v:gsub("Z", "")
 
-                limit="$val"
-            ;;
-            nick|user)
-                grep -q "$VALID_NAME" <<< "$val" || \
-                    parse_query_error "Invalid nickname/username: '$val'" \
-                        "Valid IRC nickname: $VALID_NAME"
-                eval $key="$val"
-            ;;
-            width)
-                width="$val"
+			if k == 'after' then
+				cmd_append("a", v)
+				info_append("Matching events after %s", v)
+			elseif k == 'before' then
+				cmd_append("b", v)
+				info_append("Matching events before %s", v)
+			end
+		elseif k == 'date' then
+			if not v:find(DATE_PAT) then
+				parse_query_error("Invalid date: " .. val)
+			end
+			cmd_append("D", v)
+			info_append("Matching events on %s", v)
+		elseif k == 'event' then
+			cmd_append("t", v)
+			info_append("Matching events of type %s", v)
+		elseif k == 'host' then
+			cmd_append("h", v)
+			info_append("Only showing users with a hostname of %s", v)
+		elseif k == 'limit' then
+			if not v:find("^[0-9]+$") then
+				parse_query_error("Invalid results limit: " .. val)
+			end
 
-                # if width == NaN || width == 0, width=60
-                [ "$((width))" = 0 ] && width="60"
-            ;;
-            *)
-                parse_query_error "Unknown search filter: '$key'"
-            ;;
-        esac
+			cmd_append("l", v)
+			info_append("Retrieving a maximum of %d results", v)
+		elseif k == 'nick' or k == 'user' then
+			if not v:find(USERNICK_PAT) then
+				parse_query_error("Invalid nick/user: " .. val)
+			end
 
-        # cut off processed portion
-        q="${q/$key=$val}"
-        [ "${q:0:1}" == " " ] && q="${q:1}"
-    done
+			if k == 'nick' then
+				cmd_append("n", v)
+				info_append("Only showing nicknames that match %s", v)
+			elseif k == 'user' then
+				cmd_append("u", v)
+				info_append("Only showing events from user %s", v)
+			end
+		elseif k == 'width' then
+			-- only assign width if width is a valid integer; if not,
+			-- just leave it to use the default value.
+			if v:find("^[0-9]+$") then
+				width = tonumber(v)
+				info_append("Wrapping messages at %d characters", v)
+			end
+		end
 
-    # the rest of the query is the search string
-    search="$q"
-}
+		-- remove the processed portion.
+		query = query:gsub((":%s=%s%%s?"):format(k, v), "")
+	end
 
-cons_scoop_cmd() {
-    # construct scoop command, see scoop(1)
-    cmd="$scoop_path"
+	-- now, query contains the search text.
+	if query and not (query == "") then
+		cmd = cmd .. " '" .. query .. "'"
+		info_append("Searching for '%s'", query)
+	end
 
-    cmd="$cmd -s -firc"
-    cmd="$cmd -d '$db_path'"
-    cmd="$cmd -c '$channel'"
+	return cmd, filter_info
+end
 
-    [ -z  "$after" ] || cmd="$cmd -a '${after/T/ }'"
-    [ -z "$before" ] || cmd="$cmd -b '${before/T/ }'"
-    [ -z   "$date" ] || cmd="$cmd -D '$date'"
-    [ -z  "$event" ] || cmd="$cmd -t '$event'"
-    [ -z   "$host" ] || cmd="$cmd -h '$host'"
-    [ -z  "$limit" ] || cmd="$cmd -l '$limit'"
-    [ -z   "$nick" ] || cmd="$cmd -n '$nick'"
-    [ -z   "$user" ] || cmd="$cmd -u '$user'"
-    [ -z "$search" ] || cmd="$cmd '$search'"
+local query = os.getenv("QUERY_STRING")
+if not query then
+        io.write("10 Search query:\r\n")
+        os.exit(0)
+end
 
-    echo "$cmd"
-}
+local cmd, info = parse_query(query)
+local scoop = assert(io.popen(cmd, 'r'))
+local out = assert(scoop:read('a'))
 
-cons_filter_text() {
-    printf 'Options:\n'
+io.write("20 text/gemini; lang=en\r\n")
+io.write("# #gemini IRC logs\n\n" .. info)
 
-    [ -z "$search" ] || printf '* Searching for %s\n' "'$search'"
-    [ -z  "$after" ] || printf '* Matching events after %s\n' "'${after/T/ }'"
-    [ -z "$before" ] || printf '* Matching events before %s\n' "'${before/T/ }'"
-    [ -z   "$date" ] || printf '* Matching events on %s\n' "'$date'"
-    [ -z  "$event" ] || printf '* Matching events of type %s\n' "'$event'"
-    [ -z  "$limit" ] || printf '* Only retrieving %s results\n' "'$limit'"
-    [ -z   "$host" ] || printf '* Only showing users with a hostname of %s' "'$host'"
-    [ -z   "$nick" ] || printf '* Only showing nicknames that match %s\n' "'$nick'"
-    [ -z   "$user" ] || printf '* Only showing events from %s\n' "'$user'"
+lib.begin_process_messages()
+for line in string.gmatch(out, "(.-\n)") do
+	lib.process_message(line, width)
+end
+lib.end_process_messages()
 
-    printf '* Wrapping messages at %s characters\n' "$width"
-}
-
-main() {
-    [ "$QUERY_STRING" ] || { printf "10 Search query:\r\n"; exit 0; }
-    parse_query "$QUERY_STRING"
-
-    # begin response
-    printf '20 text/gemini; lang=en\r\n'
-
-    printf '# #gemini IRC logs\n'
-    printf '\n'
-    printf '%s\n' "$(cons_filter_text)"
-    printf '\n'
-
-    begin_process_messages
-
-    # shellcheck disable=2046
-    eval $(cons_scoop_cmd) | \
-        while read -r msg; do process_message "$msg" "$width"; done
-
-    end_process_messages
-}
-
-main "$@"
+scoop:close()
