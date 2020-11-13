@@ -92,7 +92,7 @@ function parse_query(query)
 		end
 
 		-- remove the processed portion.
-		query = query:gsub((":%s=%s%%s?"):format(k, v), "")
+		query = query:gsub(":%w-=[^%s]+%s?", "")
 	end
 
 	-- now, query contains the search text.
