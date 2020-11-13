@@ -7,7 +7,7 @@ local lib = require('lib')
 
 local DATE_PAT = "%d%d%d%d%-%d%d%-%d%d"
 local DATETIME_PAT = "%d%d%d%d%-%d%d%-%d%dT%d%d:%d%d:%d%dZ"
-local USERNICK_PAT = "^([%w%-%[%]{}%^`%|]+)$"
+local USERNICK_PAT = "^([%w%-_%[%]{}%^`%|]+)$"
 
 local width = 60
 local scoop_path = "/home/kiedtl/pub/gemini/src/gemlogs/scoop"

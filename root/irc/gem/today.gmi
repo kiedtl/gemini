@@ -15,4 +15,4 @@ end
 -- reuse search page instead of providing a separate implementation
 -- use %s for the $width specifier, as $width could potentially be
 -- an invalid number. the search page will sanitize that though.
-io.write(string.format("30 ./search.lua?:width=%s%%20:after=%s\r\n", width, today))
+io.write(string.format("30 ./search.gmi?:width=%s%%20:after=%s\r\n", width, today))
