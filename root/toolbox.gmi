@@ -208,7 +208,6 @@ Some benefits are mksh outlined by this Reddit comment by u/_viz_:
 ### Some mksh cons
 * Binary history format(?!); thus, it's impossible to manipulate/view mksh's history with standard UNIX tools.
 * The history in interactive mksh will periodically refresh, pulling in command history from other running mksh sessions. Some may enjoy this but it drives me crazy.
-* As of November 2020, mksh has no support for Ctrl-L.
 
 ## ly
 
