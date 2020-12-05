@@ -4,7 +4,7 @@
 -- See the COPYING file for copyright information.
 
 local dates = os.date("*t")
-local today = string.format("%s-%s-%s", dates.year, dates.month, dates.day)
+local today = ("%d-%02d-%02d"):format(dates.year, dates.month, dates.day)
 
 local width = os.getenv("QUERY_STRING")
 if not width then

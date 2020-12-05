@@ -5,8 +5,8 @@
 
 local lib = require('lib')
 
-local DATE_PAT = "%d%d%d%d%-%d%d%-%d%d"
-local DATETIME_PAT = "%d%d%d%d%-%d%d%-%d%dT%d%d:%d%d:%d%dZ"
+local DATE_PAT = "%d%d%d%d%-%d%d?%-%d%d?"
+local DATETIME_PAT = DATE_PAT .. "T%d%d?:%d%d?:%d%d?Z"
 local USERNICK_PAT = "^([%w%-_%[%]{}%^`%|]+)$"
 
 local width = 60
@@ -38,7 +38,7 @@ function parse_query(query)
 	for k, v in query:gmatch(":(%w-)=([^%s]+)%s?") do
 		if k == 'after' or k == 'before' then
 			if not v:find(DATETIME_PAT) and not v:find(DATE_PAT) then
-				parse_query_error("Invalid date/time: " .. val)
+				parse_query_error("Invalid date/time: " .. v)
 			end
 
 			v = v:gsub("T", " ")

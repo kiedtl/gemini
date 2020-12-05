@@ -3,7 +3,8 @@
 Here are some links to view logs from the unofficial Gemini IRC channel on irc.tilde.chat.
 
 => ./today.gmi   Today's logs
-=> ./logs.txt    Download logs in plain text
+=> ./logs.txt    Download all logs in plain text
+=> ./logs.db     Download all logs in the format used by litterbox's database (sqlite3)
 => ./search.gmi  Search logs
 => ./all.gmi     All logs
 

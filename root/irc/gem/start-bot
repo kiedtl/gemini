@@ -18,6 +18,7 @@ def_db_path="${def_db_path}/logs.db"
 : ${VIA_HOST:=team.tilde.chat}
 : ${VIA_PORT:=6697}
 : ${VIA_NICK:=VI-A}
+: ${VIA_USER:=kiedtl_bots}
 : ${VIA_CHANNELS:=#gemini}
 
 log "database path: $VIA_DB_PATH"
@@ -34,6 +35,6 @@ log "nickname: $VIA_NICK, joining $VIA_CHANNELS"
 }
 
 log "starting bot"
-litterbox -d "$VIA_DB_PATH" \
+litterbox -d "$VIA_DB_PATH" -u "$VIA_USER" \
     -h "$VIA_HOST"  -p "$VIA_PORT" -n "$VIA_NICK" \
     -j "${VIA_CHANNELS}" || die "litterbox failed"

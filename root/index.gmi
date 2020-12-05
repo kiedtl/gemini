@@ -7,3 +7,10 @@ of my site here.
 => ./k1ss                     A mirror for KISS Linux's website (k1ss.org)
 => ./toolbox.gmi              A list of tools and utilities that I find useful.
 => irc/gem/                   View IRC logs for #gemini on irc.tilde.chat.
+
+## LEO
+
+=> gemini://tilde.team/~khuxkm/leo/ What's LEO?
+=> gemini://tilde.team/~khuxkm/leo/next.cgi?gemini%3A%2F%2Ftilde.team%2F~kiedtl%2F LEO: Next page
+=> gemini://tilde.team/~khuxkm/leo/next.cgi?gemini%3A%2F%2Ftilde.team%2F~kiedtl%2F LEO: Previous page
+=> gemini://tilde.team/~khuxkm/leo/rand.cgi LEO: Random page
