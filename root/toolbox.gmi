@@ -419,9 +419,10 @@ An IRC client written in bash, this monstrosity is rather primitive but *extreme
 * None that I can think of, to be honest. birch is fine if your needs are small but falls apart quickly when you want other common features.
 
 ### Cons
-* No support for TLS IRC.
-* No support for CTCP.
-* No support for IRC colors (birch doesn't even strip them -- it just displays some funny characters).
+* No support for TLS/SSL.
+* No support for CTCP (it does support CTCP ACTION, however).
+* No support for mIRC colors (birch doesn't even strip them -- it just displays some funny characters).
+* No scrollback.
 * No plugin system.
 * No configuration file (birch must be configured via command-line options).
 * birch, being written in bash, can be quite slow at times.
